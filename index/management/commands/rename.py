@@ -15,11 +15,16 @@ class Command(BaseCommand):
 
         # logic for renaming the files
 
-        files_to_rename = [f'{current_project_name}/settings/base.py',
-                           f'{current_project_name}/wsgi.py', 'manage.py', '.env']
+        files_to_rename = ['.env', f'{current_project_name}/settings/base.py',
+                           f'{current_project_name}/wsgi.py', 'manage.py']
 
         for key, f in enumerate(files_to_rename):
-            if key+1 != len(files_to_rename):
+            if key == 0:
+                filedata = "SECRET_KEY="+ get_random_secret_key()+ "\n"+"DEBUG=False"
+                with open(f, 'w') as file:
+                    file.write(filedata)      
+            else:
+                
                 with open(f, 'r') as file:
                     filedata = file.read()
 
@@ -27,11 +32,6 @@ class Command(BaseCommand):
 
                 with open(f, 'w') as file:
                     file.write(filedata)
-            else:
-                filedata = "SECRET_KEY="+ get_random_secret_key()+ "\n"+"DEBUG=False"
-                with open(f, 'w') as file:
-                    file.write(filedata)
-
         os.rename(current_project_name, new_project_name)
 
         self.stdout.write(self.style.SUCCESS(f'Project has been renamed to {new_project_name}'))
